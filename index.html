@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kobo Screensaver Generator</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#f4f4f4;
+text-align:center;
+padding:30px;
+}
+
+.controls{
+background:white;
+padding:20px;
+border-radius:10px;
+display:inline-block;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+canvas{
+border:1px solid #ccc;
+margin-top:20px;
+max-width:90%;
+}
+
+button{
+padding:8px 14px;
+margin:6px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Kobo Screensaver Generator</h1>
+
+<div class="controls">
+
+<input type="file" id="upload" accept="image/*">
+
+<br>
+
+<label>Device:</label>
+<select id="device">
+<option value="0.740">Kobo Clara Colour</option>
+<option value="0.752">Kobo Libra Colour</option>
+</select>
+
+<label>Mode:</label>
+<select id="mode">
+<option value="crop">Crop</option>
+<option value="warp">Warp</option>
+</select>
+
+<br>
+
+<button id="startCrop">Start Cropping</button>
+
+<button id="download">Download JPEG</button>
+
+</div>
+
+<br>
+
+<canvas id="canvas"></canvas>
+
+<script>
+
+const upload = document.getElementById("upload");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let img = new Image();
+let imageLoaded = false;
+
+upload.addEventListener("change", e=>{
+
+const file = e.target.files[0];
+if(!file) return;
+
+const reader = new FileReader();
+
+reader.onload = function(event){
+
+img.onload = function(){
+imageLoaded = true;
+};
+
+img.src = event.target.result;
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+document.getElementById("startCrop").onclick = function(){
+
+if(!imageLoaded){
+alert("Upload an image first.");
+return;
+}
+
+draw();
+
+};
+
+function draw(){
+
+const ratio = parseFloat(document.getElementById("device").value);
+const mode = document.getElementById("mode").value;
+
+const targetHeight = 1000;
+const targetWidth = targetHeight * ratio;
+
+canvas.width = targetWidth;
+canvas.height = targetHeight;
+
+const iw = img.width;
+const ih = img.height;
+
+if(mode === "warp"){
+
+ctx.drawImage(img,0,0,targetWidth,targetHeight);
+
+}
+else{
+
+const imgRatio = iw/ih;
+
+let sx,sy,sw,sh;
+
+if(imgRatio > ratio){
+
+sh = ih;
+sw = ih * ratio;
+sx = (iw-sw)/2;
+sy = 0;
+
+}else{
+
+sw = iw;
+sh = iw / ratio;
+sx = 0;
+sy = (ih-sh)/2;
+
+}
+
+ctx.drawImage(img,sx,sy,sw,sh,0,0,targetWidth,targetHeight);
+
+}
+
+}
+
+document.getElementById("download").onclick = function(){
+
+const link = document.createElement("a");
+link.download = "kobo_screensaver.jpg";
+link.href = canvas.toDataURL("image/jpeg",0.95);
+link.click();
+
+};
+
+</script>
+
+</body>
+</html>
