@@ -5,9 +5,9 @@
 <title>Kobo Screensaver Generator</title>
 
 <style>
-@import url('https://fonts.cdnfonts.com/css/fhwaseriesd2024');
+
 body{
-font-family: "fhwaseriesd2024", Arial;
+font-family:Arial;
 background:#f4f4f4;
 text-align:center;
 padding:30px;
@@ -18,19 +18,34 @@ background:white;
 padding:20px;
 border-radius:10px;
 display:inline-block;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
+box-shadow:0 0 10px rgba(0,0,0,0.15);
+margin-bottom:20px;
 }
 
 canvas{
 border:1px solid #ccc;
 margin-top:20px;
 max-width:90%;
+background:white;
 }
 
 button{
 padding:8px 14px;
 margin:6px;
 cursor:pointer;
+}
+
+select,input{
+margin:6px;
+}
+
+.video{
+margin-top:20px;
+}
+
+iframe{
+max-width:90%;
+border-radius:10px;
 }
 
 </style>
@@ -55,14 +70,28 @@ cursor:pointer;
 <label>Mode:</label>
 <select id="mode">
 <option value="crop">Crop</option>
-<option value="warp">Warp</option>
+<option value="warp">Warp (stretch)</option>
 </select>
 
 <br>
 
 <button id="startCrop">Start Cropping</button>
 
-<button id="download">Download JPEG</button>
+<br>
+
+<button id="downloadJPG">Download JPEG</button>
+<button id="downloadPNG">Download PNG</button>
+
+</div>
+
+<div class="video">
+
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/-_8KFPvEjsw"
+title="YouTube video player"
+frameborder="0"
+allowfullscreen>
+</iframe>
 
 </div>
 
@@ -158,11 +187,20 @@ ctx.drawImage(img,sx,sy,sw,sh,0,0,targetWidth,targetHeight);
 
 }
 
-document.getElementById("download").onclick = function(){
+document.getElementById("downloadJPG").onclick = function(){
 
 const link = document.createElement("a");
 link.download = "kobo_screensaver.jpg";
 link.href = canvas.toDataURL("image/jpeg",0.95);
+link.click();
+
+};
+
+document.getElementById("downloadPNG").onclick = function(){
+
+const link = document.createElement("a");
+link.download = "kobo_screensaver.png";
+link.href = canvas.toDataURL("image/png");
 link.click();
 
 };
